@@ -1,0 +1,66 @@
+services:
+  bot_mailing:
+    # bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/sessions:/app/sessions
+    restart: unless-stopped
+    depends_on:
+      - postgres_mail_db
+      - redis_mail_cache
+
+  postgres_mail_db:
+    # database (postgres)
+    image: postgres:17-alpine
+    env_file:
+      - .env
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  redis_mail_cache:
+    # redis (cache)
+    image: redis:6-alpine
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/data:/data
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  nats_mail:
+    # broker nats
+    image: nats:latest
+    command: "-c /config/server.conf"
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - ./nats/data:/data
+      - ./nats/server.conf:/config/server.conf
+
+  # taskiq
+  worker:
+    build:
+      context: .
+    command: taskiq worker services.taskiq.broker:broker services.taskiq.tasks
+    depends_on:
+      - nats_mail
+  scheduler:
+    build:
+      context: .
+    command: taskiq scheduler services.taskiq.scheduler:scheduler services.taskiq.tasks --skip-first-run
+    depends_on:
+      - nats_mail
