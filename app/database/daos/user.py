@@ -1,10 +1,10 @@
 import logging
 
-from sqlalchemy import select, insert, delete
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy import select, insert
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import User, Account
+from ..models import User
 from ..tools import get_session
 
 
@@ -29,9 +29,23 @@ class UserDAO:
         try:
             query = (select(User)
                      .where(User.tg_id == tg_id)
-                     .options(selectinload(User.accounts))) # загрузка аккаунта, если он где то будет использоваться
+                     .options(selectinload(User.accounts)))  # загрузка аккаунта, если он где то будет использоваться
             result = await session.execute(query)
             return result.scalar()
+        except Exception as e:
+            logging.error(f'Error while add user {e}')
+            await session.rollback()
+
+    @staticmethod
+    @get_session
+    async def get_statistics(session: AsyncSession, tg_id: int) -> 'Statistics':
+        try:
+            query = (select(User)
+                     .where(User.tg_id == tg_id)
+                     .options(selectinload(User.accounts)))  # загрузка аккаунта, если он где то будет использоваться
+            result = await session.execute(query)
+            result_scalar = result.scalar()
+            return (len(result_scalar.accounts), len(result_scalar.tasks))
         except Exception as e:
             logging.error(f'Error while add user {e}')
             await session.rollback()

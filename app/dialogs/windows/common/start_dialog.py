@@ -28,12 +28,9 @@ profile_window = Window(
     # профиль, где будет статистика
     Multi(
         Const('- Общая информация:'),
-        Format('Айди пользователя <code>{user_id}</code>'),
-        Format('Статус подписки: <code>{subscribe}</code>\n'),
+        Format('Айди пользователя <code>{user_id}</code>\n'),
         Const('- Статистика за все время:'),
         Format('Загружено аккаунтов в бота: <code>{count_accounts}</code> шт'),
-        Format('Приглашено пользователей: <code>{count_invites}</code> шт'),
-        Format('Оставлено комментариев: <code>{leaved_comms}</code> шт'),
         Format('Выполнено задач: <code>{passed_tasks}</code> шт'),
         sep='\n'
     ),

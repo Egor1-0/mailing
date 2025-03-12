@@ -1,13 +1,13 @@
 from aiogram.types import User
 
+from database.daos import UserDAO
+
 
 async def get_profile_info(event_from_user: User, **kwargs):
     """здесь должна быть статистика. но ее нет пока что"""
-    # user_data = get_from_db()
+    user_data = await UserDAO.get_statistics()
     return {'user_id': event_from_user.id,
             'subscribe': 'Отсутствует',
-            'count_accounts': 0,
-            'count_invites': 0,
-            'leaved_comms': 0,
-            'passed_tasks': 0,
+            'count_accounts': user_data[0],
+            'passed_tasks': user_data[1],
             }

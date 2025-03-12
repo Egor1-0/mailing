@@ -1,4 +1,3 @@
-from aiogram.types import User
 from aiogram_dialog import DialogManager
 
 from database.daos import UserDAO
@@ -22,11 +21,6 @@ async def get_accounts(dialog_manager: DialogManager, **kwargs):
 async def get_phone_number(dialog_manager: DialogManager, **kwargs):
     """ВОЗВРАЩАЕТ НОМЕР, КОТОРЫЙ ВВЕЛ ЮЗЕР"""
     return {'user_number': dialog_manager.dialog_data['user_number']}
-
-
-# async def get_selected_account(dialog_manager: DialogManager):
-#     """ВОЗВРАЩАЕТ АЙДИ АККАУНТА ДЛЯ ИЗМЕНЕНИЯ"""
-#     return {'selected_account_id': dialog_manager.dialog_data['selected_account_id']}
 
 
 async def get_numpad(**kwargs):

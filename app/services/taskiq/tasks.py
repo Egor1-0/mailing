@@ -27,7 +27,7 @@ async def log_message(message: str):
 
 
 @broker.task
-async def send_messages_to_chats(account_id: int, chat_links: list[str], text: str):
+async def sending_messages_to_chats(account_id: int, chat_links: list[str], text: str):
     account = await AccountDAO.get_account_by_id(acc_id=account_id)
     client = get_session(account.phone_number)
     async with client:
@@ -58,7 +58,7 @@ async def send_messages_to_chats(account_id: int, chat_links: list[str], text: s
 
 
 @broker.task
-async def sending_message(account_id: int, chat_link: str, text: str):
+async def sending_message_to_ls(account_id: int, chat_link: str, text: str):
     """не используется. должен быть при рассылке"""
     account = await AccountDAO.get_account_by_id(acc_id=account_id)
     client = get_session(account.phone_number)

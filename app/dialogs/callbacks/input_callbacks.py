@@ -5,10 +5,11 @@ from aiogram.types import Message
 from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.input import ManagedTextInput, MessageInput
 
+from database.daos import TaskDAO
 from dialogs.filters import check_links
 from states import Accounts, Tasks
-from utils.account.add_account import get_code_phone, try_to_connect
-from services.taskiq.tasks import parce_users, invite_users
+from utils.account.add_account import get_code_phone
+from services.taskiq.tasks import parce_users, invite_users, sending_message_to_ls, sending_messages_to_chats
 
 
 async def error_phone_handler(message: Message,
@@ -44,6 +45,7 @@ async def uncorrect_name(message: Message, widget: ManagedTextInput, dialog_mana
 async def correct_links_to_parce(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager,
                                  data: list[str]):
     account_id = int(dialog_manager.dialog_data['selected_account'])
+    await TaskDAO.add_passed_task(message.from_user.id, 'parcing')
     await parce_users.kiq(account_id=account_id, links=data,
                           user_id=dialog_manager.event.from_user.id)
     await dialog_manager.done()
@@ -58,6 +60,7 @@ async def correct_links_from_invite(message: Message, widget: ManagedTextInput, 
 async def correct_link_to_invite(message: Message, widget: ManagedTextInput, dialog_manager: DialogManager, data: str):
     links = dialog_manager.dialog_data['links']
     acc = dialog_manager.dialog_data['selected_account']
+    await TaskDAO.add_passed_task(message.from_user.id, 'inviting')
     await invite_users.kiq(acc, links, data)
     await dialog_manager.done()
 
@@ -109,7 +112,7 @@ async def get_links_in_file_to_parcing(message: Message,
 async def get_text_for_sending_ls(message: Message,
                                   message_input: MessageInput,
                                   dialog_manager: DialogManager,
-                                  data: dict):
+                                  data: str):
     dialog_manager.dialog_data['text_to_sending'] = data
     await dialog_manager.switch_to(Tasks.get_users_to_sending_ls)
 
@@ -117,10 +120,11 @@ async def get_text_for_sending_ls(message: Message,
 async def correct_link_to_sending_ls(message: Message,
                                      widget: ManagedTextInput,
                                      dialog_manager: DialogManager,
-                                     data: dict):
+                                     data: str):
     text = dialog_manager.dialog_data['text_to_sending']
     acc = dialog_manager.dialog_data['selected_account']
-    ...  # await invite_users.kiq(acc, links, data)
+    await TaskDAO.add_passed_task(message.from_user.id, 'sending_ls')
+    await sending_message_to_ls.kiq(acc, data, text)
     await dialog_manager.done()
 
 
@@ -138,5 +142,6 @@ async def correct_link_to_sending_chat(message: Message,
                                      data: dict):
     text = dialog_manager.dialog_data['text_to_sending']
     acc = dialog_manager.dialog_data['selected_account']
-    ...  # await invite_users.kiq(acc, links, data)
+    await TaskDAO.add_passed_task(message.from_user.id, 'sending_chat')
+    await sending_messages_to_chats.kiq(acc, data, text)
     await dialog_manager.done()
