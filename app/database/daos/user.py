@@ -42,10 +42,11 @@ class UserDAO:
         try:
             query = (select(User)
                      .where(User.tg_id == tg_id)
-                     .options(selectinload(User.accounts)))  # загрузка аккаунта, если он где то будет использоваться
+                     .options(selectinload(User.accounts))
+                     .options(selectinload(User.tasks)))  # загрузка аккаунта, если он где то будет использоваться
             result = await session.execute(query)
             result_scalar = result.scalar()
-            return (len(result_scalar.accounts), len(result_scalar.tasks))
+            return [len(result_scalar.accounts) or 0, len(result_scalar.tasks) or 0]
         except Exception as e:
-            logging.error(f'Error while add user {e}')
+            logging.error(f'Error while get statistics {e}')
             await session.rollback()

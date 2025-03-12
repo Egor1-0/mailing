@@ -11,7 +11,7 @@ from redis.asyncio.client import Redis
 from services.taskiq.scheduler import nats_source
 from services.taskiq.broker import broker
 from services.taskiq.tasks import log_message
-from database.tools import create_tables_if_not_exist
+from database.tools import create_tables_if_not_exist, drop_tables
 from dialogs import main_dialog, account_dialog, task_dialog
 from handlers.start import start_router
 from core import config

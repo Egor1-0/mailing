@@ -19,5 +19,5 @@ class Task(Base):
     task: Mapped[TaskType]
 
     user: Mapped['User'] = relationship(
-        back_populates='accounts'
+        back_populates='tasks'
     )
