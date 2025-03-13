@@ -1,7 +1,5 @@
-import os.path
+import logging
 
-from opentele.tl import TelegramClient
-from opentele.api import API
 from telethon.errors import PhoneNumberInvalidError, SessionPasswordNeededError, PhoneCodeExpiredError
 
 from .connect_to_client import get_session
@@ -38,6 +36,6 @@ async def try_to_connect(phone: str, code: int, phone_code_hash: str):
     except SessionPasswordNeededError:
         return False
     except Exception as e:
-        print(e)
+        logging.warning('warning %s', e)
         return False
     

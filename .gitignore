@@ -4,6 +4,5 @@ __pycache__
 .idea
 .vscode
 data/
-pg_data/
 *.session
 logs.log

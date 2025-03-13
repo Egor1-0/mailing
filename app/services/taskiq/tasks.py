@@ -46,14 +46,14 @@ async def sending_messages_to_chats(account_id: int, chat_links: list[str], text
                             )
                             await asyncio.sleep(2)
                         except Exception as e:
-                            logging.error(f"Ошибка при отправке сообщения в топик {topic.id}: {e}")
+                            logging.warning(f"Ошибка при отправке сообщения в топик %d: %s", topic.id, e)
                             continue
                 else:
                     await client.send_message(chat, text)
                     await asyncio.sleep(2)
 
             except Exception as e:
-                logging.error(f"Ошибка при работе с чатом {chat_link}: {e}")
+                logging.warning("Ошибка при работе с чатом %s: %s",chat_link, e)
                 continue
 
 
@@ -78,7 +78,7 @@ async def sending_message_to_ls(account_id: int, chat_link: str, text: str):
             except FloodWaitError as e:
                 await asyncio.sleep(e.seconds + 1)
             except Exception as e:
-                logging.error("Ошибка при отправке сообщения пользователю %d, %s:", user.id, e)
+                logging.warning("Ошибка при отправке сообщения пользователю %d, %s:", user.id, e)
                 continue
 
 
@@ -90,7 +90,7 @@ async def invite_users(account_id: int, links_from: list[str], link_to: str):
         try:
             target_entity = await client.get_entity(link_to)
         except Exception as e:
-            logging.error(f"Ошибка при получении целевой сущности: {e}")
+            logging.error("Ошибка при получении целевой сущности: %s", e)
             raise
 
         users = await parce_users_from_chats(client, links_from)
@@ -108,12 +108,12 @@ async def invite_users(account_id: int, links_from: list[str], link_to: str):
                     try:
                         await client(AddChatUserRequest(chat_id=target_entity.id, user_id=user_id, fwd_limit=0))
                     except Exception as e:
-                        logging.error(f"Ошибка при добавлении пользователя в чат: {e}")
+                        logging.error("Ошибка при добавлении пользователя в чат: %s", e)
                         continue
         except FloodWaitError as e:
             await asyncio.sleep(e.seconds + 1)
         except Exception as e:
-            logging.error(f"Ошибка при выполнении инвайта: {e}")
+            logging.error(f"Ошибка при выполнении инвайта: %s", e)
 
 
 @broker.task

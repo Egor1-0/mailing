@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import User
 from ..tools import get_session
+from schemas.schemas import Statistics
 
 
 class UserDAO:
@@ -38,7 +39,7 @@ class UserDAO:
 
     @staticmethod
     @get_session
-    async def get_statistics(session: AsyncSession, tg_id: int) -> 'Statistics':
+    async def get_statistics(session: AsyncSession, tg_id: int) -> Statistics | None:
         try:
             query = (select(User)
                      .where(User.tg_id == tg_id)
@@ -46,7 +47,8 @@ class UserDAO:
                      .options(selectinload(User.tasks)))  # загрузка аккаунта, если он где то будет использоваться
             result = await session.execute(query)
             result_scalar = result.scalar()
-            return [len(result_scalar.accounts) or 0, len(result_scalar.tasks) or 0]
+            return Statistics(count_accounts=len(result_scalar.accounts) or 0,
+                              count_tasks=len(result_scalar.tasks) or 0)
         except Exception as e:
             logging.error(f'Error while get statistics {e}')
             await session.rollback()

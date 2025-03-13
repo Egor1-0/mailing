@@ -18,7 +18,7 @@ def check_spaces(text: str):
     return text.strip()
 
 def check_links(text: str):
-    """проверяет что все ссылки корректные"""
+    """проверяет, что все ссылки корректные"""
     links = text.split()
 
     for link in links:
@@ -27,7 +27,7 @@ def check_links(text: str):
     return links
 
 def check_link(text: str):
-    """проверяет что ссылка корректная"""
+    """проверяет, что ссылка корректная"""
     if not (text.startswith('t.me') or text.startswith('@') or text.startswith('https://t.me')):
         raise ValueError
     return text

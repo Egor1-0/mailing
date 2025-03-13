@@ -4,12 +4,7 @@ from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-
-class TaskType(str, Enum):
-    sending_ls = 'sending_ls'
-    parcing = 'parcing'
-    sending_chat = 'sending_chat'
-    inviting = 'inviting'
+from schemas.enum_schemas import TaskType
 
 
 class Task(Base):

@@ -1,7 +1,5 @@
 import asyncio
 import logging
-import os.path
-from pathlib import Path
 
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
@@ -10,6 +8,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram_dialog import setup_dialogs
 from redis.asyncio.client import Redis
 
+from utils.startup import setup_logging
 from services.taskiq.scheduler import nats_source
 from services.taskiq.broker import broker
 from services.taskiq.tasks import log_message
@@ -47,8 +46,7 @@ async def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
-                        filename=os.path.join(Path(__file__).resolve().parent.parent, 'logs', 'logs.log'), filemode='a')
+    setup_logging()
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

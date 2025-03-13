@@ -14,5 +14,5 @@ async def parce_users_from_chats(client: TelegramClient, links: list[str]) -> se
             for p in non_admins:
                 user_data.add(p)
         except Exception as e:
-            logging.error(f"Ошибка при парсе юзеров в чате: %s, %s", link, e)
+            logging.warning(f"Ошибка при парсе юзеров в чате: %s, %s", link, e)
     return user_data
