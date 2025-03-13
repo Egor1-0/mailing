@@ -38,12 +38,10 @@ class Tasks(StatesGroup):
     # sending ls
     select_account_to_sending_ls = State()
     get_text_to_sending_ls = State()
-    # select_type_source_to_sending_ls = State()
     get_users_to_sending_ls = State()
 
     # sending chat
     select_account_to_sending_chat = State()
     get_text_to_sending_chat = State()
-    # select_type_source_to_sending_ls = State()
     get_users_to_sending_chat = State()
 

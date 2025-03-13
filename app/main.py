@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import os.path
+from pathlib import Path
 
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
@@ -45,7 +47,8 @@ async def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
+                        filename=os.path.join(Path(__file__).resolve().parent.parent, 'logs', 'logs.log'), filemode='a')
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

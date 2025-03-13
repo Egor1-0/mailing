@@ -18,9 +18,6 @@ main_menu = Window(
         Start(text=Const('Новая задача'),
               id='new_task',
               state=Tasks.menu),
-        Start(text=Const('Мои задачи'),
-              id='my_tasks',
-              state=Tasks.menu)
     ),
     state=MainWindow.start
 )
